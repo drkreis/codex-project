@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Подборы — Codex{% endblock %}
+{% block header %}
+<header class="topbar"><div><h1 class="page-title">Подборы</h1><p class="page-desc">Сохранённые варианты с характеристиками на момент выбора.</p></div><div class="topbar-actions"><a class="btn btn-primary" href="/records">Создать подбор</a></div></header>
+{% endblock %}
+{% block content %}
+<div class="table-wrap"><table class="table"><thead><tr><th>Название</th><th>Изделий</th><th>Заметка</th><th>Сохранён</th><th>Действия</th></tr></thead><tbody>
+{% for s in selections %}
+  <tr><td><a class="record-name" href="/selections/{{ s.id }}">{{ s.query }}</a></td><td>{{ s.count }}</td><td>{{ s.note or '—' }}</td><td class="nowrap">{{ s.exported_at|local_date }}</td><td><a href="/selections/{{ s.id }}/export.csv">Скачать CSV</a></td></tr>
+{% else %}
+  <tr><td colspan="5" class="empty-state">Подборов пока нет. Откройте каталог, отметьте изделия и нажмите «Сравнить выбранное».</td></tr>
+{% endfor %}
+</tbody></table></div>
+{% endblock %}

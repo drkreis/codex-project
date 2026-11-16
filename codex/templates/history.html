@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}История изменений — Codex{% endblock %}
+{% block header %}
+<header class="topbar"><div><h1 class="page-title">История изменений{% if record_id %} · запись #{{ record_id }}{% endif %}</h1><p class="page-desc">Последние 500 изменений: ручные правки, импорт и удаление записей. Время московское.</p></div><div class="topbar-actions">{% if record_id %}<a class="btn btn-ghost" href="/history">Вся история</a>{% endif %}<a class="btn btn-ghost" href="/backups">Резервные копии</a></div></header>
+{% endblock %}
+{% block content %}{% include "_history_table.html" %}{% endblock %}

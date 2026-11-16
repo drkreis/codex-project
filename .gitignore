@@ -1,0 +1,53 @@
+# Python virtual environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Python build and coverage output
+build/
+dist/
+*.egg-info/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Local environment settings (keep example files)
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.sample
+
+# Local application state; keep data/standards and data/golden in Git
+/codex/data/*.db
+/codex/data/*.db-*
+/codex/data/*.sqlite
+/codex/data/*.sqlite-*
+/codex/data/*.sqlite3
+/codex/data/*.sqlite3-*
+/codex/data/backups/
+/codex/data/uploads/
+
+# Working copies, generated reviews and the original project archive
+/.review/
+/outputs/
+
+# Editor and temporary files; portable .vscode/settings.json stays tracked
+.idea/
+*.log
+*.tmp
+*.temp
+*.swp
+*~
+
+# Office lock files and operating system metadata
+~$*
+.~lock.*#
+Thumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Редактирование' if record else 'Новое изделие' }} — Codex{% endblock %}
+{% macro field(name, title, value, required=false, placeholder="", maxlength=500) %}
+<div class="field">
+  <label for="{{ name }}">{{ title }}{% if required %} <span class="muted">(обязательно)</span>{% endif %}</label>
+  <input id="{{ name }}" type="text" name="{{ name }}" value="{{ value }}" placeholder="{{ placeholder }}" maxlength="{{ maxlength }}" {% if required %}required{% endif %} {% if error_field == name %}aria-invalid="true" aria-describedby="form-error"{% endif %}>
+</div>
+{% endmacro %}
+{% block header %}
+<header class="topbar">
+  <div><h1 class="page-title">{{ 'Редактирование изделия' if record else 'Новое изделие' }}</h1><p class="page-desc">Укажите сведения о документе и характеристики изделия.</p></div>
+  <div class="topbar-actions"><a class="btn btn-ghost" href="{{ '/records/' ~ record.id if record else '/records' }}">Отмена</a></div>
+</header>
+{% endblock %}
+{% block content %}
+<form class="record-form" method="post" action="{{ '/records/' ~ record.id ~ '/edit' if record else '/records/new' }}">
+  {% if record %}<input type="hidden" name="revision" value="{{ revision }}">{% endif %}
+  <section class="panel">
+    <h2 class="panel-title">Основные сведения</h2>
+    <div class="form-grid section-gap">
+      {{ field('document_id', 'Обозначение документа', values.document_id, true, 'Например, ТУ-42.11-001-2024', 150) }}
+      {{ field('product_name', 'Наименование изделия', values.product_name, true, 'Например, насосный агрегат NA-220', 300) }}
+    </div>
+    {{ field('title', 'Название документа', values.title, false, 'Технические условия на изделие') }}
+    <div class="field"><label for="status">Статус</label><select name="status" id="status">{% for key, name in status_labels.items() %}<option value="{{ key }}" {% if values.status == key %}selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
+  </section>
+  <section class="panel">
+    <h2 class="panel-title">Характеристики</h2>
+    <p class="help">Заполняйте только известные характеристики. Указывайте единицу измерения или используйте единицу из подсказки.</p>
+    {% if legacy_params is not none %}
+      <div class="field"><label for="params">Исправьте ранее введённые характеристики</label><textarea id="params" name="params" rows="5">{{ legacy_params }}</textarea></div>
+    {% else %}
+      <div class="form-grid">
+      {% for p in parameters %}
+        {{ field('param_' ~ p.key, p.label ~ (' (' ~ p.unit ~ ')' if p.unit else ''), param_values.get(p.key, ''), false, p.example) }}
+      {% endfor %}
+      </div>
+      <h3 class="panel-title small-title">Дополнительные характеристики</h3>
+      <div id="extra-params">
+      {% for key, value in custom_params %}
+        <div class="extra-param-row">
+          <div class="field"><label>Название<input type="text" name="extra_key" value="{{ key }}" placeholder="Например, степень защиты" maxlength="100"></label></div>
+          <div class="field"><label>Значение<input type="text" name="extra_value" value="{{ value }}" placeholder="Например, IP54" maxlength="500"></label></div>
+          <button type="button" class="btn btn-ghost remove-param" aria-label="Убрать характеристику" hidden>Убрать</button>
+        </div>
+      {% endfor %}
+      </div>
+      <button class="btn btn-ghost btn-sm" id="add-param" type="button" hidden>Добавить характеристику</button>
+    {% endif %}
+  </section>
+  <section class="panel">
+    <h2 class="panel-title">Условия и примечания</h2>
+    <div class="field section-gap"><label for="constraints_text">Условия применения</label><textarea id="constraints_text" name="constraints_text" rows="3" maxlength="5000">{{ values.constraints_text }}</textarea></div>
+    <div class="field"><label for="notes">Примечание</label><textarea id="notes" name="notes" rows="3" maxlength="5000">{{ values.notes }}</textarea></div>
+  </section>
+  {% if record and record.standard_id %}<p class="help">Изменённые поля будут защищены. Повторный разбор обновит только те значения, которые вы не исправляли.</p>{% endif %}
+  {% if error %}<p class="field-error" id="form-error">{{ error }}</p>{% endif %}
+  <div class="actions"><button class="btn btn-primary" type="submit">Сохранить изделие</button><a class="btn btn-ghost" href="{{ '/records/' ~ record.id if record else '/records' }}">Отмена</a></div>
+</form>
+{% endblock %}

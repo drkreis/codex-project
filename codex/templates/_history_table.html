@@ -1,0 +1,20 @@
+<div class="table-wrap">
+  <table class="table history-table">
+    <thead><tr><th scope="col">Когда</th><th scope="col">Изделие</th><th scope="col">Что изменено</th><th scope="col">Было</th><th scope="col">Стало</th><th scope="col">Кем</th></tr></thead>
+    <tbody>
+    {% for h in history %}
+      <tr>
+        <td class="nowrap">{{ h.ts|local_date }}</td>
+        <td>{% if h.product_name %}<a href="/records/{{ h.entity_id }}">{{ h.product_name }}</a>{% else %}Запись #{{ h.entity_id }}{% endif %}</td>
+        <td>{{ h.field_name|field_label }}</td>
+        {% for value in (h.old_value, h.new_value) %}
+        <td class="history-value">{% if h.field_name == 'delete' and value %}Запись удалена; её данные сохранены в журнале.<details><summary>Показать данные</summary><pre>{{ value }}</pre></details>{% elif value and value|length > 180 %}<details><summary>{{ value[:100] }}…</summary><span>{{ value }}</span></details>{% elif h.field_name == 'status' %}{{ value|status_label if value else '—' }}{% else %}{{ value if value is not none else '—' }}{% endif %}</td>
+        {% endfor %}
+        <td>{{ 'Разбор документа' if h.user_name == 'parser' else 'Оператор' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="empty-state">Изменений пока нет.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>

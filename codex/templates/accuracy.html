@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Проверка разбора — Codex{% endblock %}
+{% block header %}<header class="topbar"><div><h1 class="page-title">Проверка разбора</h1><p class="page-desc">Сравнение извлечённых значений с эталонной разметкой.</p></div></header>{% endblock %}
+{% block content %}
+<div class="notice">Исходный набор состоит из учебных документов. Результат относится только к документам с эталонной разметкой; ручные правки в каталоге на него не влияют.</div>
+<div class="grid-stats">
+  <div class="stat"><div class="stat-value">{{ '%.1f'|format((metrics.field_accuracy or 0) * 100) }}%</div><div class="stat-label">верных полей: {{ metrics.field_hits }} из {{ metrics.field_total }}</div></div>
+  <div class="stat"><div class="stat-value">{{ metrics.documents_perfect }} / {{ metrics.documents }}</div><div class="stat-label">документов без ошибок</div></div>
+  <div class="stat"><div class="stat-value">{{ metrics.skipped|length }}</div><div class="stat-label">пропущено при проверке</div></div>
+</div>
+{% if metrics.skipped %}<div class="notice error"><ul>{% for s in metrics.skipped %}<li>{{ s.filename }}: {{ s.error }}</li>{% endfor %}</ul></div>{% endif %}
+<div class="stack">
+{% for d in metrics.per_document %}
+<section class="panel">
+  <div class="panel-head"><h2 class="panel-title">{{ d.document_id }}</h2><span class="badge {{ 'ok' if d.document_ok else 'bad' }}">{{ '%.0f'|format(d.accuracy * 100) }}%</span></div>
+  <div class="table-wrap"><table class="table"><thead><tr><th>Поле</th><th>Ожидалось</th><th>Получено</th><th>Совпадение</th></tr></thead><tbody>
+  {% for key, fr in d.fields.items() %}<tr><td>{{ key|field_label }}</td><td>{{ fr.expected }}</td><td>{{ fr.got }}</td><td><span class="badge {{ 'ok' if fr.ok else 'bad' }}">{{ 'Да' if fr.ok else 'Нет' }}</span></td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% else %}<p class="empty-state">Нет документов с эталонной разметкой.</p>{% endfor %}
+</div>
+{% endblock %}

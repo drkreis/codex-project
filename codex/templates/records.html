@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Изделия — Codex{% endblock %}
+{% block header %}
+<header class="topbar">
+  <div><h1 class="page-title">Изделия</h1><p class="page-desc">Найдите подходящие характеристики и выберите изделия для сравнения.</p></div>
+  <div class="topbar-actions"><a class="btn btn-primary" href="/records/new">Добавить изделие</a></div>
+</header>
+{% endblock %}
+{% block content %}
+<form class="panel filters" method="get" action="/records">
+  <div class="field search-field"><label for="search">Название, документ или характеристика</label><input id="search" type="search" name="q" value="{{ filters.q }}" placeholder="Например, насос"></div>
+  <div class="filter-grid">
+    <div class="field"><label for="parameter">Числовая характеристика</label><select id="parameter" name="parameter"><option value="">Без числового фильтра</option>{% for p in numeric_parameters %}<option value="{{ p.key }}" {% if filters.parameter == p.key %}selected{% endif %}>{{ p.label }}, {{ p.unit }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="minimum">От</label><input id="minimum" type="text" inputmode="decimal" name="minimum" value="{{ filters.minimum }}" placeholder="Нижняя граница"></div>
+    <div class="field"><label for="maximum">До</label><input id="maximum" type="text" inputmode="decimal" name="maximum" value="{{ filters.maximum }}" placeholder="Верхняя граница"></div>
+    <div class="field"><label for="filter-status">Статус</label><select id="filter-status" name="status"><option value="">Все статусы</option>{% for key, name in status_labels.items() %}<option value="{{ key }}" {% if filters.status == key %}selected{% endif %}>{{ name }}</option>{% endfor %}</select></div>
+  </div>
+  <div class="filter-footer"><p class="help">Можно вводить единицы: 2200 Вт = 2,2 кВт. Диапазон изделия должен целиком укладываться в границы; неизвестные значения исключаются.</p><div class="inline-actions"><a class="btn btn-ghost" href="/records">Сбросить</a><button class="btn btn-primary" type="submit">Найти</button></div></div>
+</form>
+<form id="selection-form" method="post" action="/selections/preview">
+  <input type="hidden" name="query" value="{{ criteria or 'Подбор изделий' }}">
+  <div class="selection-toolbar">
+    <div><strong>Найдено: {{ records|length }}</strong><span class="muted" id="selection-count" aria-live="polite"> · выберите изделия</span></div>
+    <div class="inline-actions"><button class="btn btn-ghost btn-sm" type="button" id="clear-selection" hidden>Очистить выбор</button><button class="btn btn-primary" type="submit">Сравнить выбранное</button></div>
+  </div>
+  <div id="selection-hidden"></div>
+  <div class="table-wrap">
+    <table class="table records-table">
+      <thead><tr><th scope="col"><input type="checkbox" id="select-visible" aria-label="Выбрать все найденные изделия"></th><th scope="col">Изделие</th><th scope="col">Характеристики</th><th scope="col">Статус</th><th scope="col"><span class="sr-only">Действия</span></th></tr></thead>
+      <tbody>
+      {% for r in records %}
+        <tr>
+          <td><input type="checkbox" class="record-select" name="record_ids" value="{{ r.id }}" aria-label="Выбрать {{ r.product_name }}"></td>
+          <td><a class="record-name" href="/records/{{ r.id }}">{{ r.product_name or r.title }}</a><div class="muted">{{ r.document_id }}</div></td>
+          <td>{% if r.params_error %}<span class="badge bad">Нужно исправить характеристики</span>{% else %}<dl class="param-summary">{% for key, value in r.params.items() %}<div><dt>{{ key|field_label }}</dt><dd>{{ value }}</dd></div>{% else %}<div class="muted">Не указаны</div>{% endfor %}</dl>{% endif %}</td>
+          <td><span class="badge {% if r.status == 'verified' %}ok{% endif %}">{{ r.status_label }}</span>{% if r.manual_fields %}<div class="protected-label">Ручные правки защищены</div>{% endif %}</td>
+          <td><a href="/records/{{ r.id }}">Открыть</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="empty-state">{% if filters.q or filters.minimum or filters.maximum or filters.status %}Подходящих изделий нет. Попробуйте другие условия поиска.{% else %}В каталоге пока нет изделий. Загрузите стандарт или добавьте изделие вручную.{% endif %}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</form>
+{% endblock %}

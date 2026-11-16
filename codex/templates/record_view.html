@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ record.product_name }} — Codex{% endblock %}
+{% block header %}
+<header class="topbar">
+  <div><h1 class="page-title">{{ record.product_name or record.title }}</h1><p class="page-desc">{{ record.document_id }} · {{ record.status_label }}</p></div>
+  <div class="topbar-actions"><a class="btn btn-ghost" href="/records">К каталогу</a><a class="btn btn-primary" href="/records/{{ record.id }}/edit">Редактировать</a></div>
+</header>
+{% endblock %}
+{% block content %}
+{% if record.params_error %}<div class="notice error">В старой записи неверно сохранены характеристики. Откройте редактирование и укажите корректные значения. Остальные сведения доступны.</div>{% endif %}
+{% if record.manual_fields %}<div class="notice">Ручные правки защищены: {% for field in record.manual_fields %}{{ field|field_label }}{{ ', ' if not loop.last }}{% endfor %}. Повторный разбор документа их не перезапишет.</div>{% endif %}
+<div class="two">
+  <section class="panel">
+    <h2 class="panel-title">Сведения об изделии</h2>
+    <dl class="record-details">
+      <dt>Обозначение документа</dt><dd>{{ record.document_id }}</dd>
+      <dt>Название документа</dt><dd>{{ record.title or '—' }}</dd>
+      <dt>Условия применения</dt><dd>{{ record.constraints_text or '—' }}</dd>
+      <dt>Примечание</dt><dd>{{ record.notes or '—' }}</dd>
+      <dt>Последнее изменение</dt><dd>{{ record.updated_at|local_date }}</dd>
+    </dl>
+    <div class="actions">
+      <form method="post" action="/selections/preview"><input type="hidden" name="record_ids" value="{{ record.id }}"><button class="btn btn-ghost" type="submit">Добавить в подбор</button></form>
+      <form method="post" action="/records/{{ record.id }}/delete" data-confirm="Удалить изделие? Его характеристики останутся в ранее сохранённых подборах и в истории."><button class="btn btn-danger" type="submit">Удалить изделие</button></form>
+    </div>
+  </section>
+  <section class="panel">
+    <h2 class="panel-title">Характеристики</h2>
+    <dl class="record-details params-details">{% for key, value in record.params.items() %}<dt>{{ key|field_label }}</dt><dd>{{ value }}</dd>{% else %}<dt class="muted">Не указаны</dt>{% endfor %}</dl>
+  </section>
+</div>
+{% if record.conflicts %}
+<section class="panel section-gap">
+  <h2 class="panel-title">Отличия от документа</h2><p class="help">Показаны защищённые значения. Данные документа приведены для сверки.</p>
+  <div class="table-wrap"><table class="table"><thead><tr><th>Поле</th><th>Ваше значение</th><th>Из документа</th></tr></thead><tbody>{% for c in record.conflicts %}<tr><td>{{ c.label }}</td><td>{{ c.manual if c.manual is not none else 'Удалено вручную' }}</td><td>{{ c.parsed if c.parsed is not none else 'Не указано' }}</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endif %}
+<section class="panel section-gap"><div class="panel-head"><h2 class="panel-title">История изменений</h2><a href="/history?record_id={{ record.id }}">Открыть отдельно</a></div>{% include "_history_table.html" %}</section>
+{% if record.extracted_fields %}
+<details class="panel section-gap"><summary>Что извлечено из исходного документа</summary>
+  <div class="table-wrap section-gap"><table class="table"><thead><tr><th>Поле</th><th>Извлечённое значение</th></tr></thead><tbody>{% for f in record.extracted_fields %}<tr><td>{{ f.field_key|field_label }}</td><td>{{ f.value }}</td></tr>{% endfor %}</tbody></table></div>
+</details>
+{% endif %}
+{% endblock %}

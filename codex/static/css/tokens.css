@@ -1,0 +1,123 @@
+/* Codex — shared dimensions and semantic theme colors. */
+
+:root {
+  color-scheme: dark;
+
+  --bg: #070708;
+  --bg-accent: rgba(15, 122, 61, 0.11);
+  --sidebar: #0e0e10;
+  --surface: #141416;
+  --surface-raised: #1a1a1d;
+  --surface-hover: #222226;
+  --border: #2a2a2e;
+  --border-strong: #3d3d44;
+
+  --text: #f5f5f7;
+  --text-secondary: #a8a8b0;
+  --text-muted: #94949f;
+
+  --accent: #0f7a3d;
+  --accent-hover: #12914a;
+  --accent-text: #74d49a;
+  --accent-text-hover: #a0e8ba;
+  --accent-soft: rgba(15, 122, 61, 0.14);
+  --accent-glow: rgba(15, 122, 61, 0.28);
+
+  --danger: #b00020;
+  --danger-soft: rgba(176, 0, 32, 0.12);
+  --danger-text: #f1a7b1;
+  --warn: #a88b2e;
+  --ok: var(--accent);
+
+  --glass-bg: rgba(28, 30, 34, 0.52);
+  --glass-bg-strong: rgba(16, 16, 18, 0.94);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --nav-hover: rgba(255, 255, 255, 0.04);
+  --row-hover: rgba(255, 255, 255, 0.03);
+  --code-bg: #0a0a0c;
+  --sidebar-shadow: 4px 0 32px rgba(0, 0, 0, 0.25);
+  --switch-thumb: #fff;
+  --glass-blur: 20px;
+  --glass-blur-heavy: 28px;
+  --glass-saturate: 1.2;
+
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --fs-h1: 28px;
+  --fs-h2: 22px;
+  --fs-h3: 17px;
+  --fs-body: 14px;
+  --fs-caption: 12px;
+  --lh-h1: 1.15;
+  --lh-h3: 1.3;
+  --lh-body: 1.5;
+  --lh-caption: 1.4;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 40px;
+  --s-9: 48px;
+
+  --r-1: 4px;
+  --r-2: 6px;
+  --r-3: 8px;
+  --r-4: 10px;
+  --r-5: 12px;
+  --radius: var(--r-5);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow-elevated: var(--shadow-1);
+  --shadow-glass: 0 10px 32px rgba(0, 0, 0, 0.5), var(--glass-highlight);
+
+  --motion-press: 100ms;
+  --motion-fast: 160ms;
+  --motion-normal: 260ms;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --sidebar-w: 232px;
+  --control-h: 40px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f5f7f8;
+  --bg-accent: rgba(15, 122, 61, 0.05);
+  --sidebar: #fff;
+  --surface: #fff;
+  --surface-raised: #f1f4f5;
+  --surface-hover: #e7ecef;
+  --border: #dce2e5;
+  --border-strong: #b6c1c8;
+
+  --text: #19232b;
+  --text-secondary: #46545f;
+  --text-muted: #5d6b76;
+
+  --accent-hover: #0b6331;
+  --accent-text: #116b36;
+  --accent-text-hover: #084d26;
+  --accent-soft: rgba(15, 122, 61, 0.08);
+  --accent-glow: rgba(15, 122, 61, 0.16);
+  --danger: #a61935;
+  --danger-text: #a61935;
+  --danger-soft: rgba(166, 25, 53, 0.07);
+  --warn: #795d0c;
+
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-bg-strong: #fff;
+  --glass-border: rgba(25, 35, 43, 0.12);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --nav-hover: rgba(25, 35, 43, 0.05);
+  --row-hover: rgba(15, 122, 61, 0.04);
+  --code-bg: #f1f4f5;
+
+  --shadow-1: 0 1px 3px rgba(25, 35, 43, 0.06);
+  --shadow-glass: 0 10px 32px rgba(25, 35, 43, 0.08), var(--glass-highlight);
+  --sidebar-shadow: 4px 0 24px rgba(25, 35, 43, 0.04);
+}

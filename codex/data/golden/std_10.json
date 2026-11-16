@@ -1,0 +1,8 @@
+{
+  "document_id": "ТУ-26.20-088-2024",
+  "title": "Технические условия на контроллер ПЛК-М1",
+  "product_name": "Промышленный контроллер ПЛК-М1",
+  "params": "voltage_v=24 В; mass_kg=0.9 кг; dimensions_mm=120x100x70; temp_c=−20…+60 °C; service_life=12 лет",
+  "constraints": "монтаж на DIN-рейку; экранированная линия связи",
+  "notes": "поддержка Modbus TCP/RTU"
+}

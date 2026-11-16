@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Стандарты — Codex{% endblock %}
+{% block header %}
+<header class="topbar"><div><h1 class="page-title">Стандарты</h1><p class="page-desc">Загрузите документ, чтобы добавить изделия и их характеристики в каталог.</p></div></header>
+{% endblock %}
+{% block content %}
+<section class="panel">
+  <h2 class="panel-title">Загрузить документ</h2><p class="help" id="upload-help">TXT, MD или текстовый PDF, до 10 МБ. Сканы нужно предварительно распознать.</p>
+  <form class="upload-form" method="post" action="/standards/upload" enctype="multipart/form-data">
+    <div class="field"><label for="standard-file">Файл стандарта</label><input id="standard-file" type="file" name="file" accept=".txt,.pdf,.md" required aria-describedby="upload-help"></div>
+    <button class="btn btn-primary" type="submit">Загрузить и разобрать</button>
+  </form>
+</section>
+{% if import_results is not none %}
+<section class="notice" role="status">
+  Обработано документов: {{ import_results|rejectattr('error', 'defined')|list|length }}.
+  {% set failed = import_results|selectattr('error', 'defined')|list %}
+  {% if failed %}<ul>{% for result in failed %}<li>{{ result.filename }}: {{ result.error }}</li>{% endfor %}</ul>{% endif %}
+  Ручные правки сохранены.
+</section>
+{% endif %}
+<section class="panel">
+  <div class="panel-head"><h2 class="panel-title">Загруженные документы</h2>
+    <form method="post" action="/standards/reparse"><button class="btn btn-ghost btn-sm" type="submit">Повторить разбор всех</button></form>
+  </div>
+  <p class="help">Повторный разбор обновляет автоматически извлечённые значения. Ручные правки защищены.</p>
+  <div class="table-wrap"><table class="table"><thead><tr><th>Документ</th><th>Название</th><th>Формат</th><th>Загружен</th><th>Текст</th></tr></thead><tbody>
+    {% for s in standards %}<tr><td>{{ s.document_id }}</td><td>{{ s.title }}</td><td>{{ s.format|upper }}</td><td class="nowrap">{{ s.loaded_at|local_date }}</td><td><a href="/standards/{{ s.id }}/text">Скачать</a></td></tr>
+    {% else %}<tr><td colspan="5" class="empty-state">Документов пока нет. Загрузите первый стандарт выше.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

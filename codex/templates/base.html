@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}Codex{% endblock %}</title>
+  <script src="/static/js/theme.js"></script>
+  <script src="/static/js/workspace.js" defer></script>
+  <link rel="stylesheet" href="/static/css/tokens.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Перейти к содержимому</a>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Codex — главная">
+        <span class="brand-mark" aria-hidden="true">C</span>
+        <span class="brand-name">Codex</span>
+      </a>
+      <nav class="nav" aria-label="Основная навигация">
+        <a class="nav-item {% if request.url.path == '/' %}active{% endif %}" href="/">Обзор</a>
+        <a class="nav-item {% if request.url.path.startswith('/records') %}active{% endif %}" href="/records">Изделия</a>
+        <a class="nav-item {% if request.url.path.startswith('/standards') %}active{% endif %}" href="/standards">Стандарты</a>
+        <a class="nav-item {% if request.url.path.startswith('/selections') %}active{% endif %}" href="/selections">Подборы</a>
+        <a class="nav-item {% if request.url.path.startswith('/accuracy') %}active{% endif %}" href="/accuracy">Проверка разбора</a>
+        <a class="nav-item {% if request.url.path.startswith('/history') %}active{% endif %}" href="/history">История изменений</a>
+        <a class="nav-item {% if request.url.path.startswith('/backups') %}active{% endif %}" href="/backups">Резервные копии</a>
+      </nav>
+      <div class="sidebar-foot">
+        <button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-checked="true" hidden>
+          <span>Тёмная тема</span>
+          <span class="theme-toggle-track" aria-hidden="true"></span>
+        </button>
+        <span class="muted sidebar-count">{{ status.standards_count }} документов · {{ status.records_count }} изделий</span>
+      </div>
+    </aside>
+    <main class="main" id="main-content">
+      {% block header %}{% endblock %}
+      {% if notice %}<div class="notice success" role="status">{{ notice }}</div>{% endif %}
+      {% if error %}<div class="notice error" role="alert">{{ error }}</div>{% endif %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

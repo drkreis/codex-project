@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ selection.query if selection else 'Сравнение изделий' }} — Codex{% endblock %}
+{% block header %}
+<header class="topbar">
+  <div><h1 class="page-title">{{ selection.query if selection else 'Сравнение изделий' }}</h1><p class="page-desc">{% if selection %}Сохранён {{ selection.exported_at|local_date }} · {{ records|length }} изделий{% else %}Сравните характеристики и сохраните подходящий вариант.{% endif %}</p></div>
+  <div class="topbar-actions"><a class="btn btn-ghost" href="{{ '/selections' if selection else '/records' }}">{{ 'Все подборы' if selection else 'К выбору изделий' }}</a>{% if selection %}<a class="btn btn-primary" href="/selections/{{ selection.id }}/export.csv">Скачать CSV</a><button class="btn btn-ghost" type="button" id="print-comparison">Печать</button>{% endif %}</div>
+</header>
+{% endblock %}
+{% block content %}
+{% if selection %}
+  {% if notice and request.query_params.get('notice') == 'selection_saved' %}<span data-clear-selection hidden></span>{% endif %}
+  {% if selection.legacy %}<div class="notice">Этот подбор создан до сохранения характеристик. Показаны текущие данные; удалённых изделий: {{ selection.missing }}.</div>{% else %}<p class="help">Характеристики зафиксированы при сохранении. Последующие правки и удаление изделий их не изменяют.</p>{% endif %}
+  {% if selection.note %}<p class="selection-note">{{ selection.note }}</p>{% endif %}
+{% endif %}
+<div class="table-wrap comparison-wrap">
+  <table class="table comparison-table">
+    <thead><tr><th scope="col">Характеристика</th>{% for r in records %}<th scope="col">{{ r.product_name }}<span class="comparison-document">{{ r.document_id }}</span></th>{% endfor %}</tr></thead>
+    <tbody>{% for row in comparison %}<tr class="{{ 'different' if row.different }}"><th scope="row">{{ row.label }}</th>{% for value in row['values'] %}<td>{{ value }}</td>{% endfor %}</tr>{% else %}<tr><td class="empty-state">Нет доступных характеристик.</td></tr>{% endfor %}</tbody>
+  </table>
+</div>
+<p class="help">Отличающиеся значения выделены фоном.</p>
+{% if not selection %}
+<form class="panel section-gap selection-save" method="post" action="/selections">
+  <h2 class="panel-title">Сохранить подбор</h2>
+  {% for r in records %}<input type="hidden" name="record_ids" value="{{ r.id }}">{% endfor %}
+  <input type="hidden" name="revisions" value="{{ revisions }}">
+  <div class="field section-gap"><label for="selection-query">Название подбора</label><input id="selection-query" type="text" name="query" value="{{ query }}" required maxlength="300"></div>
+  <div class="field"><label for="selection-note">Заметка для заказчика</label><textarea id="selection-note" name="note" rows="3" maxlength="5000">{{ note }}</textarea></div>
+  <button class="btn btn-primary" type="submit">Сохранить подбор</button>
+</form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Обзор — Codex{% endblock %}
+{% block header %}
+<header class="topbar">
+  <div><h1 class="page-title">Обзор</h1><p class="page-desc">Документы, изделия и сохранённые подборы.</p></div>
+  <div class="topbar-actions"><a class="btn btn-ghost" href="/standards">Загрузить стандарт</a><a class="btn btn-primary" href="/records">Найти изделия</a></div>
+</header>
+{% endblock %}
+{% block content %}
+<div class="grid-stats">
+  <a class="stat stat-link" href="/standards"><div class="stat-value">{{ status.standards_count }}</div><div class="stat-label">стандартов</div></a>
+  <a class="stat stat-link" href="/records"><div class="stat-value">{{ status.records_count }}</div><div class="stat-label">изделий в каталоге</div></a>
+  <a class="stat stat-link" href="/selections"><div class="stat-value">{{ status.selections_count }}</div><div class="stat-label">сохранённых подборов</div></a>
+  <div class="stat"><div class="stat-value">{{ status.protected_count }}</div><div class="stat-label">записей с защищёнными правками</div></div>
+</div>
+<div class="two">
+  <section class="panel">
+    <h2 class="panel-title">Подобрать изделия</h2>
+    <p class="muted">Найдите изделия по названию и характеристикам. Отметьте подходящие, сравните их и сохраните результат.</p>
+    <a class="btn btn-primary" href="/records">Открыть каталог</a>
+  </section>
+  <section class="panel">
+    <h2 class="panel-title">Проверка разбора документов</h2>
+    <p><strong>{{ '%.1f'|format((status.accuracy.field_accuracy or 0) * 100) }}%</strong> верных полей на {{ status.accuracy.documents }} документах с эталонной разметкой.</p>
+    <p class="muted">Исходный набор — учебные документы. Этот результат не оценивает точность на всех загруженных стандартах.</p>
+    <a class="btn btn-ghost" href="/accuracy">Посмотреть результаты</a>
+  </section>
+</div>
+<section class="panel section-gap">
+  <div class="panel-head"><h2 class="panel-title">Последние изменения</h2><a href="/history">Вся история</a></div>
+  {% set history = recent %}{% include "_history_table.html" %}
+</section>
+{% endblock %}

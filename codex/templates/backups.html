@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Резервные копии — Codex{% endblock %}
+{% block header %}
+<header class="topbar"><div><h1 class="page-title">Резервные копии</h1><p class="page-desc">Сохранение и восстановление данных программы.</p></div><div class="topbar-actions"><form method="post" action="/backups"><button class="btn btn-primary" type="submit">Создать копию</button></form></div></header>
+{% endblock %}
+{% block content %}
+<p class="help">В копию входят изделия, подборы, история и сохранённый текст документов. Исходные PDF в неё не входят — сохраняйте их отдельно. Скачайте копию, чтобы хранить её вне папки программы.</p>
+<div class="table-wrap"><table class="table"><thead><tr><th>Файл</th><th>Создана</th><th>Размер</th><th>Действие</th></tr></thead><tbody>
+{% for b in backups %}<tr><td class="backup-name">{{ b.name }}</td><td class="nowrap">{{ b.modified|local_date }}</td><td>{{ '%.1f'|format(b.size / 1024) }} КБ</td><td><a href="/backups/{{ b.name }}">Скачать</a></td></tr>
+{% else %}<tr><td colspan="4" class="empty-state">Копий пока нет. Создайте первую перед важными изменениями.</td></tr>{% endfor %}
+</tbody></table></div>
+<section class="panel section-gap">
+  <h2 class="panel-title">Восстановить из копии</h2>
+  <p class="help">Текущие данные будут заменены. Перед восстановлением программа проверит файл и автоматически сохранит копию текущей базы.</p>
+  <form method="post" action="/backups/restore" enctype="multipart/form-data">
+    <div class="field"><label for="backup-file">Файл базы Codex (.db), до 50 МБ</label><input id="backup-file" type="file" name="file" accept=".db" required></div>
+    <label class="checkbox-label"><input type="checkbox" name="confirm" value="yes" required> Заменить текущую базу данными из выбранной копии</label>
+    <div class="actions"><button class="btn btn-danger" type="submit">Восстановить базу</button></div>
+  </form>
+</section>
+{% endblock %}
